@@ -180,7 +180,7 @@ body.pre .app{visibility:hidden}
   <footer>
    <button class="btn s" id="prev">Anterior</button>
    <div style="display:flex;gap:8px">
-    <button class="btn w" id="clear">Limpiar respuesta</button>
+    <button class="btn w" id="clear">Dejar en blanco</button>
     <button class="btn p" id="next">Siguiente</button>
    </div>
   </footer>
@@ -614,7 +614,7 @@ function goReview(i){ hideOthers(); setNav("test"); $("results").style.display =
 /* Eventos */
 $("prev").onclick = () => { if(S.idx>0){ S.idx--; render(); } };
 $("next").onclick = () => { if(S.idx < S.items.length-1){ S.idx++; render(); } else finish(); };
-$("clear").onclick = () => { delete S.answers[S.idx]; render(); };
+$("clear").onclick = () => { delete S.answers[S.idx]; render(); if(S.idx < S.items.length - 1) $("next").click(); };
 $("finish").onclick = finish;
 $("review").onclick = () => goReview(0);
 $("restart").onclick = () => start();
