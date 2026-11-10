@@ -478,7 +478,7 @@ function start(poolOverride, modeOverride, penOverride){
   const sel = $("exam").value;
   if(modeOverride) $("mode").value = modeOverride;
   const full = buildPool(sel);
-  const pool = poolOverride || (sel === "all" ? shuffle(full).slice(0, EXAM_N) : full);
+  const pool = poolOverride || (sel === "all" && $("mode").value !== "study" ? shuffle(full).slice(0, EXAM_N) : full);
   const pen = penOverride !== undefined ? penOverride : (sel === "all" ? DEFAULT_PEN : EXAMS[+sel].pen);
   S = { items: prepare(pool), answers: [], idx: 0, finished: false, t0: Date.now(), elapsed: 0, filter: sel, pen };
   $("rule").textContent = "aciertos +0,5 · errores " + (pen ? "−" + fmt(pen) : "no restan");
@@ -487,7 +487,7 @@ function start(poolOverride, modeOverride, penOverride){
   clearInterval(timerId);
   timerId = setInterval(() => { if(!S.finished){ S.elapsed = Math.floor((Date.now()-S.t0)/1000); $("timer").textContent = mmss(S.elapsed); } }, 1000);
   $("timer").textContent = "00:00";
-  const label = sel === "all" ? "Intento de " + pool.length + " preguntas al azar" : "Convocatoria " + EXAMS[+sel].name;
+  const label = sel === "all" ? (pool.length < full.length ? "Intento de " + pool.length + " preguntas al azar" : "Todas las convocatorias (sin repetidas)") : "Convocatoria " + EXAMS[+sel].name;
   $("badge").textContent = (poolOverride ? "Repaso de falladas" : label);
   render();
 }
