@@ -121,9 +121,10 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
  .nav button{flex:1;padding:11px 2px;font-size:13.5px}
 }
  @media(max-width:860px){body.nq #grid,body.nq #finish{display:none}}
+body.pre .app{visibility:hidden}
 </style>
 </head>
-<body>
+<body class="pre">
 <div id="gate"><form id="gForm"><div class="gb">Subsicivæ<sup>™</sup></div><div class="gr">© 2026 Hadrianus Muratellensis. «Subsicivæ», su logotipo y su código son obra suya. Nombre y logotipo: todos los derechos reservados. Código: licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a> (atribución, sin uso comercial, misma licencia).</div><p class="gd"><b>Horae subsicivae</b> eran, para los romanos, las horas sobrantes: las que quedan cuando se ha acabado de trabajar, de cuidar y de atender lo demás. Esta app es para quienes estudian Derecho en la UNED en ese tiempo robado al día. La ha desarrollado <b>Hadrianus Muratellensis</b>. Contacto: <a href="mailto:adrigranov@proton.me">adrigranov@proton.me</a></p><p class="gs">Acceso reservado. Entra con tu correo y la contraseña que te han dado.</p>
 <input id="gMail" type="email" placeholder="Correo electrónico" autocomplete="email"><input id="gPass" type="password" placeholder="Contraseña" autocomplete="current-password">
 <label class="gk"><input type="checkbox" id="gKeep" checked> Recordarme en este dispositivo</label><button class="btn p" id="gBtn" type="submit">Entrar</button><div id="gErr"></div><div class="gl">Macti animo estote, qui iuri proprio Marte uacatis!</div><em class="gf">Hadrianus Muratellensis me fecit</em></form></div>
@@ -391,7 +392,7 @@ function showGate(msg){
   });
 }
 async function ensureAccess(){
-  if(LOGIN){ const st = await checkAccess(LOGIN.pw); if(st !== "bad") return; LOGIN = null; try{ localStorage.removeItem("uned_login"); }catch(e){} return showGate("La contraseña ha cambiado. Vuelve a entrar."); }
+  if(LOGIN){ checkAccess(LOGIN.pw).then(st => { if(st === "bad"){ try{ localStorage.removeItem("uned_login"); }catch(e){} location.reload(); } }); return; }
   const st = await checkAccess(""); if(st === "open") return;
   return showGate();
 }
@@ -659,7 +660,7 @@ $("manFile").onchange = e => {
 };
 $("manQ").oninput = () => searchManual($("manQ").value);
 $("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){} MAN = null; $("manOut").innerHTML = ""; renderManual(); };
-ensureAccess().then(boot);
+ensureAccess().then(() => { document.body.classList.remove("pre"); return boot(); });
 if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 $("logoutBtn").onclick=function(){try{localStorage.removeItem("uned_login");}catch(e){} location.reload();};
 $("setBtn").onclick=function(){var a=document.querySelector("aside");a.classList.toggle("open");this.textContent=a.classList.contains("open")?"⚙ Ocultar ajustes":"⚙ Ajustes y asignatura";};
