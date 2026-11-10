@@ -99,12 +99,14 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
  #grid{grid-template-columns:repeat(10,1fr);flex:none;max-height:110px}
  main{padding:16px}#qtext{font-size:21px}.opt{font-size:17px}
 }
+.intro{font-size:14px;line-height:1.5;color:var(--ink2);margin:10px 0 0;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(122,37,48,.05);font-style:italic}.intro b{color:var(--wine);font-style:normal}.intro .lnk{font-style:normal}
 </style>
 </head>
 <body>
 <div class="app">
  <aside>
   <div class="brand"><span>Subsicivae</span><em>horas subsecivas</em></div>
+  <p class="intro"><b>Horae subsicivae</b> eran, para los romanos, las horas sobrantes: las que quedan cuando se ha acabado de trabajar, de cuidar y de atender lo demás. Esta app es para quienes estudian en la UNED en ese tiempo robado al día. <button class="lnk" id="introMore">Saber más</button></p>
   <div><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
   <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
   <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select>
@@ -603,6 +605,7 @@ $("manQ").oninput = () => searchManual($("manQ").value);
 $("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){} MAN = null; $("manOut").innerHTML = ""; renderManual(); };
 boot();
 if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+document.getElementById("introMore").onclick=function(){document.getElementById("aboutBtn").click()};
 </script>
 </body>
 </html>
