@@ -103,6 +103,7 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 #gate{display:none;position:fixed;inset:0;z-index:99;background:var(--paper,#f4ecd8);align-items:center;justify-content:center;padding:20px}#gForm{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;text-align:center}#gForm .gb{font-size:34px;font-weight:700;color:var(--wine);letter-spacing:2px}#gForm .gs{margin:0;font-style:italic;color:var(--ink2)}#gForm input[type=email],#gForm input[type=password]{font:inherit;font-size:17px;padding:12px;border:1px solid var(--gold);border-radius:6px;background:#fffdf6}#gForm .gk{font-size:14px;color:var(--ink2)}#gErr{min-height:20px;color:var(--wine);font-size:14px}#gForm .gf{font-size:12px;color:var(--ink2)}
 #gForm .gd{margin:0;font-size:15px;line-height:1.5;font-style:italic;color:var(--ink2);padding:10px 12px;border-left:3px solid var(--gold);background:rgba(122,37,48,.05);text-align:left}#gForm .gd b{color:var(--wine);font-style:normal}#gate{overflow:auto}
 #gForm .gl{font-size:17px;color:var(--wine);font-style:italic;line-height:1.35}#gForm .gl small{display:block;font-size:12px;color:var(--ink2);margin-top:3px}#gForm .gd a{color:var(--navy)}
+.sdesc{font-size:12.5px;line-height:1.45;font-style:italic;color:var(--ink2);margin-top:6px}.sdesc:empty{display:none}
 </style>
 </head>
 <body>
@@ -115,7 +116,7 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
   <p class="intro"><b>Horae subsicivae</b> eran, para los romanos, las horas sobrantes: las que quedan cuando se ha acabado de trabajar, de cuidar y de atender lo demás. Esta app es para quienes estudian en la UNED en ese tiempo robado al día. <button class="lnk" id="introMore">Saber más</button></p>
   <div><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
   <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
-  <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select>
+  <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select><div id="subjDesc" class="sdesc"></div>
    <div class="sbtns"><button class="lnk" id="subjLib">＋ Añadir asignaturas</button><button class="lnk" id="subjDel" style="display:none">Quitar esta</button></div></div>
   <input type="file" id="bankFile" accept=".json,application/json" hidden><input type="file" id="impFile" accept=".json,application/json" hidden>
   <div><label for="exam">Convocatoria</label><select id="exam"></select></div>
@@ -381,7 +382,7 @@ async function getCatalog(){ const r = await fetch("asignaturas.json", {cache:"n
 async function installSubject(en){
   const r = await fetch(en.file, {cache:"no-cache"}); if(!r.ok) throw new Error("file");
   let j = await r.json(); if(j && j.c){ if(!LOGIN) throw new Error("login"); j = await decJSON(j, LOGIN.pw); } if(!validBank(j)) throw new Error("bad");
-  j.id = en.id; j.version = en.version || 1;
+  j.id = en.id; j.version = en.version || 1; j.desc = en.descripcion || "";
   const l = userSubjects().filter(x => x.id !== en.id); l.push(j); return saveSubjects(l);
 }
 async function renderLib(){
@@ -410,6 +411,7 @@ async function boot(){
 function fillSubjects(){
   const s = $("subj"); s.innerHTML = allSubjects().map(x => '<option value="' + x.id + '"' + (x.id===SUBJ?' selected':'') + '>' + x.name + '</option>').join("");
   $("subjDel").style.display = allSubjects().length ? "" : "none";
+  { const cu = allSubjects().find(x => x.id === SUBJ); $("subjDesc").textContent = (cu && cu.desc) || ""; }
 }
 function setSubject(id){ SUBJ = id; lsSet("uned_subj", id); MAN = null; applySubject(); fillSubjects(); initUI(); }
 const TEMPLATE = {name:"Nombre de la asignatura", exams:[{name:"Convocatoria 1", pen:0.1, qs:[["Texto de la pregunta", ["Opción A","Opción B","Opción C"], 1, "Nota opcional", "Tema 1"]]}]};
