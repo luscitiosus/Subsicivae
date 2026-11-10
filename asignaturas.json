@@ -4,7 +4,7 @@
    "id": "teoria-del-derecho",
    "name": "Teoría del Derecho (UNED)",
    "descripcion": "Grado en Derecho. 13 convocatorias reales (2022-2026) con la referencia al manual de cada pregunta.",
-   "file": "asig-teoria-del-derecho.json",
+   "file": "asig-teoria-del-derecho.enc.json",
    "version": 1,
    "preguntas": 160
   }
