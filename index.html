@@ -628,6 +628,15 @@ document.addEventListener("keydown", e => {
   }
 });
 
+/* Deslizar entre preguntas */
+(function(){ let x0=null,y0=0,t0=0; const q=$("quiz");
+  q.addEventListener("touchstart",e=>{ if(e.touches.length!==1||e.target.closest("textarea,input,select")){x0=null;return;} x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now(); },{passive:true});
+  q.addEventListener("touchend",e=>{ if(x0===null||!S)return; const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0; x0=null;
+    if(Date.now()-t0>600||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.6)return;
+    if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
+    $(dx<0?"next":"prev").click(); },{passive:true});
+})();
+
 /* Inicio */
 function initUI(){
   const sel = $("exam");

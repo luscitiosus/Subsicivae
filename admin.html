@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- Hadrianus Muratellensis me fecit. Licencia CC BY-NC-SA 4.0 -->
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Subsicivæ · Cifrar banco</title>
+<style>body{background:#16130f;color:#e8dfc8;font:17px/1.45 Georgia,serif;max-width:640px;margin:0 auto;padding:20px}
+h1{font-size:24px}label{display:block;margin:14px 0 4px}input,textarea,button{font:inherit;width:100%;box-sizing:border-box;padding:10px;background:#201b15;color:#e8dfc8;border:1px solid #5a4d3a;border-radius:2px}
+button{background:#7a2a3c;border-color:#8c3347;cursor:pointer;margin-top:14px}small{color:#a89c80}#o{margin-top:14px;color:#9fc79a}</style></head><body>
+<h1>Cifrar banco de preguntas</h1>
+<small>Todo ocurre en tu navegador: nada se envía a ningún sitio. Usa la misma clave que la app.</small>
+<label>Banco (.json sin cifrar)</label><input type="file" id="f" accept=".json,application/json">
+<label>Clave de acceso</label><input type="password" id="p" autocomplete="off">
+<button id="b">Cifrar y descargar</button>
+<button id="a">Generar acceso.json (solo con la clave)</button>
+<div id="o"></div>
+<script>
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+async function enc(bytes,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+const m=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+const k=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:200000,hash:"SHA-256"},m,{name:"AES-GCM",length:256},false,["encrypt"]);
+const c=await crypto.subtle.encrypt({name:"AES-GCM",iv},k,bytes);
+return JSON.stringify({v:1,s:b64(salt),i:b64(iv),c:b64(c)});}
+function dl(txt,name){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=name;a.click();}
+const o=document.getElementById("o"),pw=()=>document.getElementById("p").value;
+document.getElementById("b").onclick=async()=>{ if(!pw())return o.textContent="Escribe la clave.";
+const f=document.getElementById("f").files[0]; if(!f)return o.textContent="Elige un banco.";
+let t=await f.text(); try{const j=JSON.parse(t); if(!j.name||!Array.isArray(j.exams))throw 0}catch(e){return o.textContent="El archivo no parece un banco válido."}
+const name=f.name.replace(/\.json$/,"").replace(/\.enc$/,"")+".enc.json"; dl(await enc(new TextEncoder().encode(t),pw()),name); o.textContent="Descargado "+name+". Súbelo al repositorio y ajusta «file» en asignaturas.json.";};
+document.getElementById("a").onclick=async()=>{ if(!pw())return o.textContent="Escribe la clave.";
+dl(await enc(new TextEncoder().encode(JSON.stringify("subsicivae")),pw()),"acceso.json"); o.textContent="Descargado acceso.json.";};
+</script></body></html>
