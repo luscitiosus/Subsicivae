@@ -100,9 +100,13 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
  main{padding:16px}#qtext{font-size:21px}.opt{font-size:17px}
 }
 .intro{font-size:14px;line-height:1.5;color:var(--ink2);margin:10px 0 0;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(122,37,48,.05);font-style:italic}.intro b{color:var(--wine);font-style:normal}.intro .lnk{font-style:normal}
+#gate{display:none;position:fixed;inset:0;z-index:99;background:var(--paper,#f4ecd8);align-items:center;justify-content:center;padding:20px}#gForm{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;text-align:center}#gForm .gb{font-size:34px;font-weight:700;color:var(--wine);letter-spacing:2px}#gForm .gs{margin:0;font-style:italic;color:var(--ink2)}#gForm input[type=email],#gForm input[type=password]{font:inherit;font-size:17px;padding:12px;border:1px solid var(--gold);border-radius:6px;background:#fffdf6}#gForm .gk{font-size:14px;color:var(--ink2)}#gErr{min-height:20px;color:var(--wine);font-size:14px}#gForm .gf{font-size:12px;color:var(--ink2)}
 </style>
 </head>
 <body>
+<div id="gate"><form id="gForm"><div class="gb">Subsicivae</div><p class="gs">Acceso reservado. Entra con tu correo y la contraseña que te han dado.</p>
+<input id="gMail" type="email" placeholder="Correo electrónico" autocomplete="email"><input id="gPass" type="password" placeholder="Contraseña" autocomplete="current-password">
+<label class="gk"><input type="checkbox" id="gKeep" checked> Recordarme en este dispositivo</label><button class="btn p" id="gBtn" type="submit">Entrar</button><div id="gErr"></div><em class="gf">Hadrianus Muratellensis me fecit</em></form></div>
 <div class="app">
  <aside>
   <div class="brand"><span>Subsicivae</span><em>horas subsecivas</em></div>
@@ -127,7 +131,7 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
   <div class="stats"><span id="counter"></span><b id="answered"></b></div>
   <div id="grid"></div>
   <button class="btn p" id="finish">Finalizar y ver nota</button>
-  <div class="colophon"><button class="lnk" id="aboutBtn">Acerca de Subsicivae</button><br><em>Hadrianus Muratellensis me fecit</em><br><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a> · Los extractos del manual pertenecen a sus autores</div>
+  <div class="colophon"><button class="lnk" id="aboutBtn">Acerca de Subsicivae</button> · <button class="lnk" id="logoutBtn">Salir</button><br><em>Hadrianus Muratellensis me fecit</em><br><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a> · Los extractos del manual pertenecen a sus autores</div>
  </aside>
 
  <main id="quiz">
@@ -341,10 +345,40 @@ function goManual(q){ showView("manV"); $("manQ").value = q; searchManual(q); }
 
 /* Biblioteca de asignaturas: se descargan del archivo asignaturas.json de la web */
 function validBank(j){ return j && j.name && Array.isArray(j.exams) && j.exams.every(x => x.name && Array.isArray(x.qs) && x.qs.every(q => Array.isArray(q) && typeof q[0]==="string" && Array.isArray(q[1]) && q[1].length>1 && Number.isInteger(q[2]) && q[2]>=0 && q[2]<q[1].length)); }
+/* Acceso: las asignaturas viajan cifradas (AES-GCM) y se abren con la clave del grupo */
+const B64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function keyFrom(pw, salt){ const m = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]); return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:200000, hash:"SHA-256"}, m, {name:"AES-GCM", length:256}, false, ["decrypt"]); }
+async function decJSON(o, pw){ const k = await keyFrom(pw, B64(o.s)); const p = await crypto.subtle.decrypt({name:"AES-GCM", iv:B64(o.i)}, k, B64(o.c)); return JSON.parse(new TextDecoder().decode(p)); }
+let LOGIN = lsGet("uned_login", null);
+async function checkAccess(pw){
+  let r; try{ r = await fetch("acceso.json", {cache:"no-cache"}); }catch(e){ return "offline"; }
+  if(r.status === 404) return "open";
+  if(!r.ok) return "offline";
+  try{ return (await decJSON(await r.json(), pw)) === "subsicivae" ? "ok" : "bad"; }catch(e){ return "bad"; }
+}
+function showGate(msg){
+  return new Promise(res => {
+    const g = $("gate"); g.style.display = "flex"; $("gErr").textContent = msg || "";
+    $("gForm").onsubmit = async ev => {
+      ev.preventDefault(); const em = $("gMail").value.trim(), pw = $("gPass").value;
+      if(!em || !pw){ $("gErr").textContent = "Escribe tu correo y la contraseña."; return; }
+      $("gBtn").disabled = true; $("gErr").textContent = "Comprobando…";
+      const st = await checkAccess(pw); $("gBtn").disabled = false;
+      if(st === "bad"){ $("gErr").textContent = "Contraseña incorrecta."; return; }
+      if(st === "offline"){ $("gErr").textContent = "No hay conexión para comprobar la contraseña."; return; }
+      LOGIN = {email: em, pw: pw}; if($("gKeep").checked) lsSet("uned_login", LOGIN); g.style.display = "none"; res();
+    };
+  });
+}
+async function ensureAccess(){
+  if(LOGIN){ const st = await checkAccess(LOGIN.pw); if(st !== "bad") return; LOGIN = null; try{ localStorage.removeItem("uned_login"); }catch(e){} return showGate("La contraseña ha cambiado. Vuelve a entrar."); }
+  const st = await checkAccess(""); if(st === "open") return;
+  return showGate();
+}
 async function getCatalog(){ const r = await fetch("asignaturas.json", {cache:"no-cache"}); if(!r.ok) throw new Error("catalog"); return (await r.json()).asignaturas || []; }
 async function installSubject(en){
   const r = await fetch(en.file, {cache:"no-cache"}); if(!r.ok) throw new Error("file");
-  const j = await r.json(); if(!validBank(j)) throw new Error("bad");
+  let j = await r.json(); if(j && j.c){ if(!LOGIN) throw new Error("login"); j = await decJSON(j, LOGIN.pw); } if(!validBank(j)) throw new Error("bad");
   j.id = en.id; j.version = en.version || 1;
   const l = userSubjects().filter(x => x.id !== en.id); l.push(j); return saveSubjects(l);
 }
@@ -603,8 +637,9 @@ $("manFile").onchange = e => {
 };
 $("manQ").oninput = () => searchManual($("manQ").value);
 $("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){} MAN = null; $("manOut").innerHTML = ""; renderManual(); };
-boot();
+ensureAccess().then(boot);
 if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+$("logoutBtn").onclick=function(){try{localStorage.removeItem("uned_login");}catch(e){} location.reload();};
 document.getElementById("introMore").onclick=function(){document.getElementById("aboutBtn").click()};
 </script>
 </body>
