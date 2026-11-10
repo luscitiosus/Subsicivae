@@ -472,11 +472,13 @@ function prepare(pool){
   });
 }
 
+const EXAM_N = 20; // preguntas por intento (como el examen real)
 function start(poolOverride, modeOverride, penOverride){
   hideOthers(); setNav("test");
   const sel = $("exam").value;
   if(modeOverride) $("mode").value = modeOverride;
-  const pool = poolOverride || buildPool(sel);
+  const full = buildPool(sel);
+  const pool = poolOverride || (sel === "all" ? shuffle(full).slice(0, EXAM_N) : full);
   const pen = penOverride !== undefined ? penOverride : (sel === "all" ? DEFAULT_PEN : EXAMS[+sel].pen);
   S = { items: prepare(pool), answers: [], idx: 0, finished: false, t0: Date.now(), elapsed: 0, filter: sel, pen };
   $("rule").textContent = "aciertos +0,5 · errores " + (pen ? "−" + fmt(pen) : "no restan");
@@ -485,7 +487,7 @@ function start(poolOverride, modeOverride, penOverride){
   clearInterval(timerId);
   timerId = setInterval(() => { if(!S.finished){ S.elapsed = Math.floor((Date.now()-S.t0)/1000); $("timer").textContent = mmss(S.elapsed); } }, 1000);
   $("timer").textContent = "00:00";
-  const label = sel === "all" ? "Todas las convocatorias (sin repetidas)" : "Convocatoria " + EXAMS[+sel].name;
+  const label = sel === "all" ? "Intento de " + pool.length + " preguntas al azar" : "Convocatoria " + EXAMS[+sel].name;
   $("badge").textContent = (poolOverride ? "Repaso de falladas" : label);
   render();
 }
@@ -649,7 +651,7 @@ function hideSw(){ $("swHint").hidden=true; try{ localStorage.setItem("uned_sw",
 function initUI(){
   const sel = $("exam");
   const total = buildPool("all").length;
-  sel.innerHTML = '<option value="all">Todas (' + total + ' preguntas únicas)</option>' +
+  sel.innerHTML = '<option value="all">Todas · sorteo de ' + Math.min(EXAM_N,total) + ' de ' + total + '</option>' +
     EXAMS.map((e,i) => '<option value="' + i + '">' + e.name + ' (' + e.qs.length + ')</option>').join("");
   updateSrsBtn(); start();
 }
