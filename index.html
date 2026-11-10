@@ -106,6 +106,21 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 .sdesc{font-size:12.5px;line-height:1.45;font-style:italic;color:var(--ink2);margin-top:6px}.sdesc:empty{display:none}
 #gForm .gb sup{font-size:13px;vertical-align:super;letter-spacing:0}#gForm .gr{font-size:11.5px;color:var(--ink2);margin-top:-6px;line-height:1.4}
 .rc{font-size:12px;font-weight:600;margin:2px 0 6px;letter-spacing:.3px}.rc.c-e{color:var(--green)}.rc.c-a{color:var(--gold)}.rc.c-d{color:var(--wine)}
+
+.setbtn{display:none}
+@media(max-width:860px){
+ body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+ .app{height:calc(100dvh - 64px - env(safe-area-inset-bottom))}
+ aside{max-height:none;overflow:visible;padding:8px 10px;gap:6px}
+ aside .brand{display:none}
+ aside h1{font-size:19px;margin:0}aside .sub{display:none}
+ .setbtn{display:inline-block;align-self:flex-start;font-size:14px}
+ aside:not(.open)>*:not(.keep):not(.nav):not(#grid):not(#finish){display:none}
+ aside.open{max-height:60dvh;overflow-y:auto}
+ .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;gap:4px;margin:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--paper2);border-top:2px solid var(--gold)}
+ .nav button{flex:1;padding:11px 2px;font-size:13.5px}
+}
+ @media(max-width:860px){body.nq #grid,body.nq #finish{display:none}}
 </style>
 </head>
 <body>
@@ -115,7 +130,8 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 <div class="app">
  <aside>
   <div class="brand"><span>Subsicivæ</span><em>horas subsecivas</em></div>
-  <div><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
+  <button class="lnk setbtn keep" id="setBtn" type="button">⚙ Ajustes y asignatura</button>
+  <div class="keep"><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
   <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
   <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select><div id="subjDesc" class="sdesc"></div>
    <div class="sbtns"><button class="lnk" id="subjLib">＋ Añadir asignaturas</button><button class="lnk" id="subjDel" style="display:none">Quitar esta</button></div></div>
@@ -257,7 +273,7 @@ function startSrs(){
 }
 
 /* Vistas */
-function setNav(v){ document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); }
+function setNav(v){ document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); document.body.classList.toggle("nq", ["temas","prog","man"].indexOf(v) >= 0); }
 function hideOthers(){ $("aboutV").style.display = "none"; $("libV").style.display = "none"; $("temasV").style.display = "none"; $("progV").style.display = "none"; $("manV").style.display = "none"; }
 function showView(v){
   $("quiz").style.display = "none"; $("results").style.display = "none"; hideOthers();
@@ -646,6 +662,7 @@ $("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){
 ensureAccess().then(boot);
 if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 $("logoutBtn").onclick=function(){try{localStorage.removeItem("uned_login");}catch(e){} location.reload();};
+$("setBtn").onclick=function(){var a=document.querySelector("aside");a.classList.toggle("open");this.textContent=a.classList.contains("open")?"⚙ Ocultar ajustes":"⚙ Ajustes y asignatura";};
 </script>
 </body>
 </html>
