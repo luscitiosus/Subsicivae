@@ -101,10 +101,11 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 }
 .intro{font-size:14px;line-height:1.5;color:var(--ink2);margin:10px 0 0;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(122,37,48,.05);font-style:italic}.intro b{color:var(--wine);font-style:normal}.intro .lnk{font-style:normal}
 #gate{display:none;position:fixed;inset:0;z-index:99;background:var(--paper,#f4ecd8);align-items:center;justify-content:center;padding:20px}#gForm{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;text-align:center}#gForm .gb{font-size:34px;font-weight:700;color:var(--wine);letter-spacing:2px}#gForm .gs{margin:0;font-style:italic;color:var(--ink2)}#gForm input[type=email],#gForm input[type=password]{font:inherit;font-size:17px;padding:12px;border:1px solid var(--gold);border-radius:6px;background:#fffdf6}#gForm .gk{font-size:14px;color:var(--ink2)}#gErr{min-height:20px;color:var(--wine);font-size:14px}#gForm .gf{font-size:12px;color:var(--ink2)}
+#gForm .gd{margin:0;font-size:15px;line-height:1.5;font-style:italic;color:var(--ink2);padding:10px 12px;border-left:3px solid var(--gold);background:rgba(122,37,48,.05);text-align:left}#gForm .gd b{color:var(--wine);font-style:normal}#gate{overflow:auto}
 </style>
 </head>
 <body>
-<div id="gate"><form id="gForm"><div class="gb">Subsicivae</div><p class="gs">Acceso reservado. Entra con tu correo y la contraseña que te han dado.</p>
+<div id="gate"><form id="gForm"><div class="gb">Subsicivae</div><p class="gd"><b>Horae subsicivae</b> eran, para los romanos, las horas sobrantes: las que quedan cuando se ha acabado de trabajar, de cuidar y de atender lo demás. Esta app es para quienes estudian en la UNED en ese tiempo robado al día. La ha desarrollado <b>Hadrianus Muratellensis</b>.</p><p class="gs">Acceso reservado. Entra con tu correo y la contraseña que te han dado.</p>
 <input id="gMail" type="email" placeholder="Correo electrónico" autocomplete="email"><input id="gPass" type="password" placeholder="Contraseña" autocomplete="current-password">
 <label class="gk"><input type="checkbox" id="gKeep" checked> Recordarme en este dispositivo</label><button class="btn p" id="gBtn" type="submit">Entrar</button><div id="gErr"></div><em class="gf">Hadrianus Muratellensis me fecit</em></form></div>
 <div class="app">
