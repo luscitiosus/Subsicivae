@@ -114,7 +114,6 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 <div class="app">
  <aside>
   <div class="brand"><span>Subsicivæ</span><em>horas subsecivas</em></div>
-  <p class="intro"><b>Horae subsicivae</b> eran, para los romanos, las horas sobrantes: las que quedan cuando se ha acabado de trabajar, de cuidar y de atender lo demás. Esta app es para quienes estudian en la UNED en ese tiempo robado al día. <button class="lnk" id="introMore">Saber más</button></p>
   <div><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
   <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
   <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select><div id="subjDesc" class="sdesc"></div>
@@ -645,7 +644,6 @@ $("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){
 ensureAccess().then(boot);
 if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 $("logoutBtn").onclick=function(){try{localStorage.removeItem("uned_login");}catch(e){} location.reload();};
-document.getElementById("introMore").onclick=function(){document.getElementById("aboutBtn").click()};
 </script>
 </body>
 </html>
