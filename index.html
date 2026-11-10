@@ -8,6 +8,8 @@
 <meta name="copyright" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
 <title>Subsicivæ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#16130f"><meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +17,11 @@
 <meta name="apple-mobile-web-app-title" content="Subsicivæ">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+button,.btn,.opt,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button{transition:background .15s,border-color .15s,transform .08s}button:active{transform:scale(.98)}
+@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+main{animation:fin .22s ease-out}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 :root{--paper:#16130f;--paper2:#1e1913;--ink:#e9dfc8;--ink2:#a89a80;--rule:#4a3f2e;--wine:#c45a6f;--wineb:#8f3043;--gold:#c9a24a;--green:#8fb37a;--navy:#9db4d3;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;font-family:"Ibarra Real Nova","Palatino Linotype",Palatino,Georgia,serif;font-size:17px;background:#0e0c09 radial-gradient(circle at 50% 0,#221b13,#0e0c09);color:var(--ink);min-height:100vh;display:flex;justify-content:center;padding:10px}
