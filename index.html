@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<!-- Hadrianus Muratellensis me fecit. Licencia CC BY-NC-SA 4.0: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Hadrianus Muratellensis">
+<meta name="copyright" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<title>Subsicivae</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#7a2530">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Subsicivae">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+:root{--paper:#f4ecd8;--paper2:#ebe0c3;--ink:#2b2118;--ink2:#5c4a38;--rule:#c9b68c;--wine:#7a2530;--gold:#a67c2e;--green:#3f5e3a;--navy:#2f3e52}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Ibarra Real Nova","Palatino Linotype",Palatino,Georgia,serif;font-size:17px;background:#d9cba8 radial-gradient(circle at 50% 0,#e6dabb,#cdbd94);color:var(--ink);min-height:100vh;display:flex;justify-content:center;padding:10px}
+.app{width:100%;max-width:1200px;height:calc(100vh - 20px);background:var(--paper);border:1px solid var(--gold);outline:1px solid var(--rule);outline-offset:-6px;border-radius:3px;box-shadow:0 12px 34px rgba(60,40,10,.3);display:flex;overflow:hidden}
+aside{width:300px;flex-shrink:0;background:var(--paper2);border-right:1px double var(--gold);padding:20px 16px;display:flex;flex-direction:column;gap:11px}
+aside h1{margin:0;font-size:27px;font-weight:700;color:var(--wine);letter-spacing:.3px;text-align:center;border-bottom:1px solid var(--gold);padding-bottom:6px}
+aside .sub{font-size:14px;font-style:italic;color:var(--ink2);margin:6px 0 0;text-align:center}
+label{font-size:13px;font-weight:600;color:var(--ink2);display:block;margin-bottom:3px;letter-spacing:.8px;text-transform:uppercase}
+select{width:100%;padding:7px;border:1px solid var(--rule);border-radius:2px;font:inherit;font-size:16px;background:#faf4e4;color:var(--ink)}
+.chk{display:flex;align-items:center;gap:6px;font-size:15px;margin:2px 0;text-transform:none;letter-spacing:0;font-weight:500}
+.stats{display:flex;justify-content:space-between;font-size:14px;color:var(--ink2)}
+.stats b{color:var(--wine)}
+#grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:6px;background:#faf4e4;border:1px solid var(--rule);border-radius:2px;align-content:start;min-height:80px}
+#grid button{aspect-ratio:1;border:1px solid var(--rule);border-radius:50%;background:#faf4e4;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink2)}
+#grid button.ans{background:#e8dcb8;border-color:var(--gold);color:var(--ink)}
+#grid button.ok{background:#d5dfc3;border-color:var(--green);color:var(--green)}
+#grid button.bad{background:#ecc9c4;border-color:var(--wine);color:var(--wine)}
+#grid button.cur{background:var(--wine);border-color:var(--wine);color:#f4ecd8}
+.colophon{text-align:center;font-size:13px;color:var(--ink2);border-top:1px solid var(--rule);padding-top:8px;line-height:1.35}.colophon em{font-size:15px;color:var(--wine)}.colophon a{color:var(--navy)}
+.btn{border:1px solid var(--ink2);border-radius:2px;padding:9px 16px;font:inherit;font-size:16px;font-weight:600;letter-spacing:.4px;cursor:pointer}
+.btn.p{background:var(--wine);border-color:var(--wine);color:#f8f0dc}.btn.p:hover{background:#5e1a24}
+.btn.s{background:transparent;color:var(--ink)}.btn.s:hover{background:var(--paper2)}
+.btn.w{background:transparent;color:var(--gold);border-color:var(--gold)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+main{flex:1;display:flex;flex-direction:column;padding:28px 40px;overflow-y:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;margin-bottom:20px;border-bottom:3px double var(--gold);font-size:16px;gap:8px;flex-wrap:wrap}
+.badge{background:transparent;color:var(--wine);font-size:14px;font-weight:600;font-style:italic;padding:2px 12px;border:1px solid var(--wine);border-radius:2px}
+#timer{font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600}
+.qwrap{max-width:780px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;justify-content:center}
+#qtext{font-size:26px;font-weight:600;line-height:1.35;margin:0 0 24px;color:var(--ink)}
+#qtext::first-letter{color:var(--wine);font-size:1.25em}
+#opts{display:flex;flex-direction:column;gap:10px}
+.opt{text-align:left;padding:13px 16px;border:1px solid var(--rule);border-left:4px solid var(--rule);border-radius:2px;background:#faf4e4;font:inherit;font-size:19px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;color:var(--ink)}
+.opt:hover:not(:disabled){background:#f1e6c6;border-left-color:var(--gold)}
+.opt .l{font-weight:700;color:var(--gold);font-style:italic}
+.opt.sel{background:#efe2bd;border-color:var(--gold);border-left-color:var(--wine)}
+.opt.ok{background:#e0e8cf;border-color:var(--green);border-left-color:var(--green);color:#26401f}
+.opt.bad{background:#f2d6d1;border-color:var(--wine);border-left-color:var(--wine);color:#5e1a24}
+.opt.dim{opacity:.55}
+.opt:disabled{cursor:default}
+.note{margin-top:14px;padding:12px 14px;border-radius:2px;background:#f7edc9;border:1px solid var(--gold);font-size:16px;font-style:italic;color:#5a4318}
+.ref{margin-top:14px;padding:14px 18px;background:#fbf6e8;border:1px solid var(--gold);outline:1px solid var(--rule);outline-offset:-5px;border-radius:2px;color:var(--ink)}
+.ref .rh{font-size:13px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--wine)}
+.ref .rl{font-size:15px;font-weight:600;color:var(--navy);margin:3px 0 8px}
+.ref .rx{font-size:17px;font-style:italic;line-height:1.5;border-left:3px solid var(--gold);padding-left:12px}
+.ref .rw{margin-top:8px;font-size:14px;color:var(--wine)}
+footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top:3px double var(--gold);display:flex;justify-content:space-between;gap:8px}
+#results{display:none;flex:1;overflow-y:auto;padding:28px;flex-direction:column;align-items:center}
+.card{max-width:580px;width:100%;background:#faf4e4;border:1px solid var(--gold);outline:1px solid var(--rule);outline-offset:-6px;border-radius:2px;padding:30px;text-align:center}
+.score{font-size:58px;font-weight:700;color:var(--wine);line-height:1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.grid3 div{background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:10px;font-size:14px;color:var(--ink2)}
+.grid3 strong{display:block;font-size:22px;margin-top:4px;color:var(--ink)}
+.fails{text-align:left;margin-top:14px;font-size:15px}
+.fails button{border:1px solid var(--wine);background:#f2d6d1;color:var(--wine);border-radius:2px;margin:2px;padding:3px 9px;cursor:pointer;font:inherit;font-weight:600}
+.row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.row .btn{flex:1}
+.hint{font-size:14px;color:var(--ink2);background:var(--paper2);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-top:12px;text-align:left}
+
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.brand{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--rule);padding-bottom:4px}.brand span{font-size:22px;font-weight:700;color:var(--wine);letter-spacing:1px}.brand em{font-size:12px;color:var(--ink2)}
+.nav button{border:1px solid var(--rule);background:#faf4e4;color:var(--ink2);font:inherit;font-size:13px;font-weight:600;padding:7px 1px;cursor:pointer;border-radius:2px}
+.nav button.on{background:var(--wine);border-color:var(--wine);color:#f8f0dc}
+.subjrow .sbtns{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px}
+.lnk{background:none;border:0;padding:0;font:inherit;font-size:13px;color:var(--navy);text-decoration:underline;cursor:pointer}
+#aboutV,#libV,#temasV,#progV,#manV{display:none;flex:1;overflow-y:auto;padding:28px;flex-direction:column;align-items:center}
+.card.wide{max-width:760px;text-align:left}
+.card.wide p{line-height:1.5;margin:6px 0}.card.wide a{color:var(--navy)}
+.card.wide h3{margin:18px 0 6px;color:var(--wine);font-size:18px;border-bottom:1px solid var(--rule);padding-bottom:3px}
+.card.wide .grid3{text-align:center}
+.tcard{border:1px solid var(--rule);border-left:4px solid var(--gold);background:#fbf6e8;padding:11px 14px;margin:10px 0}.tcard .tt{font-weight:600;font-size:17px}.tcard .btn{margin-top:8px;font-size:14px;padding:6px 12px}
+.trow{margin:9px 0}.tname{font-weight:600;font-size:15px}.tnum{font-size:13px;color:var(--ink2)}
+.bar{position:relative;height:9px;background:#e6dbbd;border:1px solid var(--rule);margin:3px 0}
+.bar .seen,.bar .fill{position:absolute;left:0;top:0;bottom:0}.bar .seen{background:#d5c597}.bar .fill{background:var(--green)}
+.wrow{font-size:14px;padding:5px 0;border-bottom:1px dotted var(--rule)}
+#manQ{width:100%;padding:9px;font:inherit;font-size:17px;border:1px solid var(--rule);background:#faf4e4;color:var(--ink);border-radius:2px}
+.mhit{margin:10px 0;padding:10px 12px;background:#fbf6e8;border-left:3px solid var(--gold);font-size:15px;line-height:1.45}
+.mbtn{margin-top:10px;font-size:14px;padding:6px 12px}
+@media(max-width:860px){
+ body{padding:0}.app{flex-direction:column;height:100vh;border-radius:0}
+ aside{width:100%;border-right:0;border-bottom:3px double var(--gold);padding:10px;max-height:46vh;overflow-y:auto}
+ #grid{grid-template-columns:repeat(10,1fr);flex:none;max-height:110px}
+ main{padding:16px}#qtext{font-size:21px}.opt{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside>
+  <div class="brand"><span>Subsicivae</span><em>horas subsecivas</em></div>
+  <div><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
+  <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
+  <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select>
+   <div class="sbtns"><button class="lnk" id="subjLib">＋ Añadir asignaturas</button><button class="lnk" id="subjDel" style="display:none">Quitar esta</button></div></div>
+  <input type="file" id="bankFile" accept=".json,application/json" hidden><input type="file" id="impFile" accept=".json,application/json" hidden>
+  <div><label for="exam">Convocatoria</label><select id="exam"></select></div>
+  <div>
+   <label for="mode">Modo</label>
+   <select id="mode">
+    <option value="exam">Examen (corrección al final)</option>
+    <option value="study">Estudio (corrección inmediata)</option>
+   </select>
+  </div>
+  <div>
+   <label class="chk"><input type="checkbox" id="shQ"> Barajar preguntas</label>
+   <label class="chk"><input type="checkbox" id="shO" checked> Barajar opciones</label>
+  </div>
+  <div class="stats"><span id="counter"></span><b id="answered"></b></div>
+  <div id="grid"></div>
+  <button class="btn p" id="finish">Finalizar y ver nota</button>
+  <div class="colophon"><button class="lnk" id="aboutBtn">Acerca de Subsicivae</button><br><em>Hadrianus Muratellensis me fecit</em><br><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a> · Los extractos del manual pertenecen a sus autores</div>
+ </aside>
+
+ <main id="quiz">
+  <header>
+   <span class="badge" id="badge"></span>
+   <span id="timer">00:00</span>
+   <span id="progress"></span>
+  </header>
+  <div class="qwrap">
+   <h2 id="qtext"></h2>
+   <div id="opts"></div>
+   <div id="note" class="note" style="display:none"></div>
+   <div id="ref" class="ref" style="display:none"></div>
+  </div>
+  <footer>
+   <button class="btn s" id="prev">Anterior</button>
+   <div style="display:flex;gap:8px">
+    <button class="btn w" id="clear">Limpiar respuesta</button>
+    <button class="btn p" id="next">Siguiente</button>
+   </div>
+  </footer>
+ </main>
+
+<section id="aboutV"><div class="card wide"><h2 style="margin:0 0 10px">Acerca de Subsicivae</h2>
+  <h3>¿Qué significa el nombre?</h3>
+  <p><em>Horae subsicivae</em> son, en latín, las horas sobrantes: el tiempo que queda libre una vez cumplidas las obligaciones del día. Son las horas que se aprovechan de más para el estudio, y de ahí el nombre. Subsicivae nace para ese tiempo: ratos cortos en el móvil, entre el trabajo y la vida, para ir avanzando en la carrera.</p>
+  <h3>¿Para quién es?</h3>
+  <p>Está pensada para estudiantes de la UNED. Reúne exámenes reales de convocatorias anteriores, con su corrección y la referencia al manual, y ayuda a repasar con repetición espaciada. Se pueden ir añadiendo asignaturas.</p>
+  <h3>Autoría y contacto</h3>
+  <p>Desarrollada por <em>Hadrianus Muratellensis</em>.<br>Contacto: <a href="mailto:adrigranov@proton.me">adrigranov@proton.me</a></p>
+  <h3>Importante</h3>
+  <p class="hint">Subsicivae es un proyecto independiente: no está vinculada a la UNED ni a sus editoriales. Los manuales y exámenes citados pertenecen a sus autores y a la UNED. Tu progreso y tus ajustes se guardan solo en tu dispositivo: la app no recoge datos personales. Programa publicado con licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a>.</p>
+  <p style="text-align:center;margin-top:16px"><em>Hadrianus Muratellensis me fecit</em></p>
+ </div></section>
+ <section id="libV"><div class="card wide"><h2 style="margin:0 0 10px">Asignaturas</h2><div id="libBody"></div>
+  <h3>Tu propio banco</h3><p class="hint">¿Tienes un banco de preguntas en formato .json? Cárgalo aquí. Solo queda en tu navegador.</p>
+  <div class="row"><button class="btn s" id="subjAdd">Cargar archivo (.json)</button><button class="btn s" id="subjTpl">Descargar plantilla</button></div>
+  <h3>Comparte la app</h3><div class="row"><button class="btn p" id="subjShare">Compartir Subsicivae</button></div>
+  <p class="hint" style="margin-top:14px"><em>Hadrianus Muratellensis me fecit</em> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener">CC BY-NC-SA 4.0</a></p></div></section>
+ <section id="temasV"><div class="card wide"><h2 style="margin:0 0 10px">Temas</h2><div id="temasBody"></div></div></section>
+ <section id="progV"><div class="card wide"><h2 style="margin:0 0 10px">Tu progreso</h2><div id="progBody"></div></div></section>
+ <section id="manV"><div class="card wide"><h2 style="margin:0 0 10px">Manual</h2>
+  <div id="manLoad"><p class="hint">Carga el texto de tu manual (.txt) para buscar en él. <b>El archivo no se sube a ningún sitio: se queda en tu navegador.</b></p><button class="btn p" onclick="$('manFile').click()">Cargar manual (.txt)</button><input type="file" id="manFile" accept=".txt,text/plain" hidden></div>
+  <div id="manSearch" style="display:none"><input id="manQ" type="search" placeholder="Busca una palabra o frase…" autocomplete="off"><div id="manOut"></div><button class="lnk" id="manDel">Quitar el manual de este navegador</button></div>
+ </div></section>
+
+ <section id="results">
+  <div class="card">
+   <h2 style="margin:0 0 4px">Resultado</h2>
+   <p style="margin:0 0 16px;font-size:13px;color:#5c4a38" id="rsub"></p>
+   <div class="score" id="rscore">0,00</div>
+   <p style="font-size:12px;color:#5c4a38;margin:6px 0 0" id="rmax"></p>
+   <p style="font-size:15px;font-weight:600;margin:8px 0 0" id="rten"></p>
+   <div class="grid3">
+    <div>Aciertos (+0,5)<strong id="sc" style="color:#3f5e3a">0</strong></div>
+    <div id="lerr">Errores<strong id="si" style="color:#7a2530">0</strong></div>
+    <div>En blanco (0)<strong id="sb" style="color:#a67c2e">0</strong></div>
+   </div>
+   <div class="fails" id="fails"></div>
+   <div class="hint" id="hist"></div>
+   <div class="row">
+    <button class="btn s" id="review">Revisar test</button>
+    <button class="btn s" id="redo">Repasar falladas</button>
+    <button class="btn p" id="restart">Reiniciar</button>
+   </div>
+  </div>
+ </section>
+</div>
+
+<script>
+/* =====================================================================
+   BANCO DE PREGUNTAS (13 convocatorias reales, extraídas del PDF "todos contestados")
+   Formato: [enunciado, [opciones], índice_correcta(0..), nota_opcional]
+   pen = puntos que resta cada error (0 en las convocatorias de 2022; 0,10 desde 2023).
+   ===================================================================== */
+let EXAMS = [];
+const PTS_OK = 0.5, DEFAULT_PEN = 0.10;
+const $ = id => document.getElementById(id);
+const LET = ["A","B","C","D","E"];
+let REFS = {};
+let TEMAS = {};
+const NZ=s=>s.toLowerCase().replace(/[^a-z0-9áéíóúñ]/g,"");
+const refOf=x=>REFS[NZ(x[0])+"|"+NZ(x[1][x[2]])]||null;
+let S = null, timerId = null;
+/* ===== CAPA «ESTUDIO UNED»: asignaturas, repaso espaciado, progreso y manual local ===== */
+const lsGet = (k,d) => { try{ const v = localStorage.getItem(k); return v===null ? d : v; }catch(e){ return d; } };
+const lsSet = (k,v) => { try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } };
+function userSubjects(){ try{ return JSON.parse(lsGet("uned_subjects","[]")); }catch(e){ return []; } }
+function allSubjects(){ return userSubjects(); }
+function saveSubjects(l){ if(!lsSet("uned_subjects", JSON.stringify(l))){ alert("No hay espacio en este navegador para guardar más asignaturas. Quita alguna."); return false; } return true; }
+let SUBJ = lsGet("uned_subj","");
+function applySubject(){
+  let s = allSubjects().find(x => x.id === SUBJ); if(!s){ s = allSubjects()[0]; if(!s) return; SUBJ = s.id; }
+  EXAMS = s.exams; REFS = s.refs || {}; TEMAS = s.temas || {}; $("h1").textContent = s.name; document.title = "Subsicivae · " + s.name;
+}
+const temaOf = it => it.ref && it.ref.t ? "Tema " + it.ref.t : (it.tema || "Sin tema");
+const keyOf = it => NZ(it.q) + "|" + NZ(it.opts[it.ans]);
+const INTV = [0,1,3,7,16,35];               // días hasta la próxima vez, por caja
+const stKey = () => "uned_st_" + SUBJ;
+function stLoad(){ try{ return JSON.parse(lsGet(stKey(),"{}")); }catch(e){ return {}; } }
+function record(it, ok){
+  const st = stLoad(), k = keyOf(it), r = st[k] || {b:0, ok:0, ko:0};
+  if(ok){ r.ok++; r.b = Math.min(5, r.b+1); r.due = Date.now() + INTV[r.b]*864e5; }
+  else { r.ko++; r.b = 0; r.due = Date.now() + 6e5; }
+  r.t = Date.now(); r.tema = temaOf(it); r.q = it.q; st[k] = r; lsSet(stKey(), JSON.stringify(st)); updateSrsBtn();
+}
+function srsSets(){
+  const st = stLoad(), now = Date.now(), due = [], nw = [];
+  buildPool("all").forEach(it => { const r = st[keyOf(it)]; if(!r) nw.push(it); else if(r.due <= now) due.push(it); });
+  due.sort((a,b) => st[keyOf(a)].due - st[keyOf(b)].due);
+  return {due, nw};
+}
+function updateSrsBtn(){ const {due,nw} = srsSets(); $("bSrs").textContent = "Repaso (" + (due.length + Math.min(10,nw.length)) + ")"; }
+function startSrs(){
+  const {due,nw} = srsSets(); let pool = due.slice(0,20);
+  if(pool.length < 20) pool = pool.concat(shuffle(nw).slice(0, Math.min(10, 20 - pool.length)));
+  if(!pool.length){ alert("No tienes nada pendiente de repasar por hoy."); return; }
+  start(pool, "study", DEFAULT_PEN); $("badge").textContent = "Repaso espaciado";
+}
+
+/* Vistas */
+function setNav(v){ document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); }
+function hideOthers(){ $("aboutV").style.display = "none"; $("libV").style.display = "none"; $("temasV").style.display = "none"; $("progV").style.display = "none"; $("manV").style.display = "none"; }
+function showView(v){
+  $("quiz").style.display = "none"; $("results").style.display = "none"; hideOthers();
+  $(v).style.display = "flex"; setNav({temasV:"temas",progV:"prog",manV:"man"}[v] || "");
+  if(v === "libV") renderLib(); else if(v === "progV") renderProgress(); else if(v === "temasV") renderTemas(); else renderManual();
+}
+
+
+/* Temas: un bloque por capítulo, con su frecuencia en los exámenes y práctica por tema */
+function renderTemas(){
+  const box = $("temasBody"); box.innerHTML = "";
+  const st = stLoad(), pool = buildPool("all"), nEx = EXAMS.length, cnt = {};
+  EXAMS.forEach(e => e.qs.forEach(x => { const k = NZ(x[0]) + "|" + NZ(x[1][x[2]]); cnt[k] = (cnt[k]||0) + 1; }));
+  const por = {};
+  pool.forEach(it => { const t = temaOf(it), k = keyOf(it); const p = por[t] = por[t] || {items:[], app:0, seen:0, mast:0}; p.items.push(it); p.app += cnt[k]||1; const r = st[k]; if(r){ p.seen++; if(r.b >= 4) p.mast++; } });
+  Object.keys(por).sort((a,b) => (parseInt(a.replace(/\D/g,""))||999) - (parseInt(b.replace(/\D/g,""))||999)).forEach(t => {
+    const p = por[t], num = t.replace("Tema ","");
+    const c = el("div","tcard");
+    c.appendChild(el("div","tt", TEMAS[num] ? t + ". " + TEMAS[num] : t));
+    c.appendChild(el("div","tnum", p.items.length + " preguntas · cae ≈" + (p.app/nEx).toFixed(1).replace(".",",") + " por examen · " + p.mast + " dominadas"));
+    const bar = el("div","bar"); const v = el("div","seen"); v.style.width = p.seen/p.items.length*100 + "%"; const f = el("div","fill"); f.style.width = p.mast/p.items.length*100 + "%"; bar.append(v,f); c.appendChild(bar);
+    const b = el("button","btn s","Practicar este tema"); b.onclick = () => { start(p.items, "study", DEFAULT_PEN); $("badge").textContent = t; };
+    c.appendChild(b); box.appendChild(c);
+  });
+}
+
+/* Progreso */
+function el(tag, cls, txt){ const e = document.createElement(tag); if(cls) e.className = cls; if(txt !== undefined) e.textContent = txt; return e; }
+function renderProgress(){
+  const box = $("progBody"); box.innerHTML = "";
+  const st = stLoad(), pool = buildPool("all"), total = pool.length;
+  let seen = 0, mast = 0, ok = 0, ko = 0; const por = {};
+  pool.forEach(it => {
+    const t = temaOf(it), r = st[keyOf(it)]; por[t] = por[t] || {n:0, seen:0, mast:0, ok:0, ko:0}; por[t].n++;
+    if(r){ seen++; por[t].seen++; ok += r.ok; ko += r.ko; por[t].ok += r.ok; por[t].ko += r.ko; if(r.b >= 4){ mast++; por[t].mast++; } }
+  });
+  const g = el("div","grid3");
+  [["Vistas", seen + " / " + total],["Dominadas", mast],["Acierto", (ok+ko ? Math.round(ok/(ok+ko)*100) : 0) + " %"]].forEach(a => { const d = el("div","",a[0]); d.appendChild(el("strong","",String(a[1]))); g.appendChild(d); });
+  box.appendChild(g);
+  box.appendChild(el("p","hint","«Dominada» = acertada varias veces seguidas (caja 4 o más del repaso espaciado)."));
+  box.appendChild(el("h3","","Por tema"));
+  Object.keys(por).sort((a,b) => (parseInt(a.replace(/\D/g,""))||999) - (parseInt(b.replace(/\D/g,""))||999)).forEach(t => {
+    const p = por[t], row = el("div","trow");
+    const name = TEMAS[t.replace("Tema ","")] ? t + ". " + TEMAS[t.replace("Tema ","")] : t;
+    row.appendChild(el("div","tname", name));
+    const bar = el("div","bar"); const f = el("div","fill"); f.style.width = (p.n ? p.mast/p.n*100 : 0) + "%"; const v = el("div","seen"); v.style.width = (p.n ? p.seen/p.n*100 : 0) + "%"; bar.append(v,f); row.appendChild(bar);
+    row.appendChild(el("div","tnum", p.mast + " dominadas · " + p.seen + "/" + p.n + " vistas · " + (p.ok+p.ko ? Math.round(p.ok/(p.ok+p.ko)*100) : 0) + " % acierto"));
+    box.appendChild(row);
+  });
+  const worst = Object.values(st).filter(r => r.ko > 0).sort((a,b) => b.ko - a.ko).slice(0,8);
+  box.appendChild(el("h3","","Más falladas"));
+  if(!worst.length) box.appendChild(el("p","hint","Aún no has fallado ninguna."));
+  worst.forEach(r => box.appendChild(el("div","wrow", r.ko + " fallos · " + (r.tema||"") + " · " + r.q)));
+  box.appendChild(el("h3","","Tus datos"));
+  box.appendChild(el("p","hint","Todo se guarda solo en este navegador. Exporta una copia para llevártela a otro dispositivo o para no perderla si borras los datos del navegador."));
+  const r = el("div","row");
+  const be = el("button","btn s","Exportar progreso"); be.onclick = exportData;
+  const bi = el("button","btn s","Importar progreso"); bi.onclick = () => $("impFile").click();
+  const bz = el("button","btn w","Borrar progreso de esta asignatura"); bz.onclick = () => { if(confirm("¿Borrar todo el progreso de esta asignatura?")){ try{ localStorage.removeItem(stKey()); }catch(e){} updateSrsBtn(); renderProgress(); } };
+  r.append(be,bi,bz); box.appendChild(r);
+}
+function exportData(){
+  const o = {}; try{ for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(k.indexOf("uned_st_")===0 || k==="uned_td_hist") o[k] = localStorage.getItem(k); } }catch(e){}
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(o)],{type:"application/json"})); a.download = "progreso-estudio-uned.json"; a.click();
+}
+
+/* Manual local con buscador: el texto no sale nunca del navegador */
+const nrm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/s/g,"");
+let MAN = null;
+function manKey(){ return "uned_man_" + SUBJ; }
+function buildManual(txt){
+  const lines = txt.split(/\r?\n/).filter(l => l.trim()), ch = [];
+  for(let i=0;i<lines.length;i+=3){ const t = lines.slice(i,i+6).join(" "); ch.push({t, n:nrm(t)}); }
+  MAN = ch;
+}
+function renderManual(){
+  const has = !!MAN; $("manLoad").style.display = has ? "none" : "block"; $("manSearch").style.display = has ? "block" : "none";
+  if(!has){ const t = lsGet(manKey(), ""); if(t){ buildManual(t); renderManual(); } }
+}
+function searchManual(q){
+  const out = $("manOut"); out.innerHTML = "";
+  const words = nrm(q).split(/\s+/).filter(w => w.length > 1); if(!MAN || !words.length) return;
+  const hits = MAN.map(c => ({c, s: words.reduce((a,w) => a + (c.n.indexOf(w) >= 0 ? 1 : 0), 0)})).filter(h => h.s === words.length).slice(0,25);
+  if(!hits.length) out.appendChild(el("p","hint","Sin resultados. Prueba con menos palabras."));
+  hits.forEach(h => out.appendChild(el("div","mhit", h.c.t)));
+}
+function goManual(q){ showView("manV"); $("manQ").value = q; searchManual(q); }
+
+
+/* Biblioteca de asignaturas: se descargan del archivo asignaturas.json de la web */
+function validBank(j){ return j && j.name && Array.isArray(j.exams) && j.exams.every(x => x.name && Array.isArray(x.qs) && x.qs.every(q => Array.isArray(q) && typeof q[0]==="string" && Array.isArray(q[1]) && q[1].length>1 && Number.isInteger(q[2]) && q[2]>=0 && q[2]<q[1].length)); }
+async function getCatalog(){ const r = await fetch("asignaturas.json", {cache:"no-cache"}); if(!r.ok) throw new Error("catalog"); return (await r.json()).asignaturas || []; }
+async function installSubject(en){
+  const r = await fetch(en.file, {cache:"no-cache"}); if(!r.ok) throw new Error("file");
+  const j = await r.json(); if(!validBank(j)) throw new Error("bad");
+  j.id = en.id; j.version = en.version || 1;
+  const l = userSubjects().filter(x => x.id !== en.id); l.push(j); return saveSubjects(l);
+}
+async function renderLib(){
+  const box = $("libBody"); box.innerHTML = ""; box.appendChild(el("p","hint","Buscando asignaturas disponibles…"));
+  let cat = null; try{ cat = await getCatalog(); }catch(e){}
+  box.innerHTML = "";
+  if(!cat){ box.appendChild(el("p","hint","No hay conexión: solo puedes usar las asignaturas que ya tienes instaladas.")); }
+  else cat.forEach(en => {
+    const mine = userSubjects().find(x => x.id === en.id), c = el("div","tcard");
+    c.appendChild(el("div","tt", en.name)); c.appendChild(el("div","tnum", (en.descripcion || "") + (en.preguntas ? " · " + en.preguntas + " preguntas" : "")));
+    const upd = mine && (en.version || 1) > (mine.version || 1);
+    const b = el("button", mine && !upd ? "btn s" : "btn p", upd ? "Actualizar" : mine ? "Instalada ✓ (reinstalar)" : "Descargar");
+    b.onclick = async () => { b.disabled = true; b.textContent = "Descargando…"; try{ if(await installSubject(en)){ if(!SUBJ || !allSubjects().some(x => x.id === SUBJ)) SUBJ = en.id; lsSet("uned_subj", SUBJ); applySubject(); fillSubjects(); initUI(); showView("libV"); } }catch(e){ alert("No se ha podido descargar. Comprueba tu conexión."); } renderLib(); };
+    c.appendChild(b); box.appendChild(c);
+  });
+}
+async function boot(){
+  { const o = lsGet("uned_st_td", null); if(o && lsGet("uned_st_teoria-del-derecho", null) === null) lsSet("uned_st_teoria-del-derecho", o); const m = lsGet("uned_man_td", null); if(m && lsGet("uned_man_teoria-del-derecho", null) === null) lsSet("uned_man_teoria-del-derecho", m); }
+  if(!allSubjects().length){
+    try{ const cat = await getCatalog(); if(cat.length) await installSubject(cat[0]); }catch(e){}
+  }
+  if(allSubjects().length){ applySubject(); fillSubjects(); initUI(); } else { fillSubjects(); showView("libV"); }
+}
+
+/* Asignaturas */
+function fillSubjects(){
+  const s = $("subj"); s.innerHTML = allSubjects().map(x => '<option value="' + x.id + '"' + (x.id===SUBJ?' selected':'') + '>' + x.name + '</option>').join("");
+  $("subjDel").style.display = allSubjects().length ? "" : "none";
+}
+function setSubject(id){ SUBJ = id; lsSet("uned_subj", id); MAN = null; applySubject(); fillSubjects(); initUI(); }
+const TEMPLATE = {name:"Nombre de la asignatura", exams:[{name:"Convocatoria 1", pen:0.1, qs:[["Texto de la pregunta", ["Opción A","Opción B","Opción C"], 1, "Nota opcional", "Tema 1"]]}]};
+
+
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function fmt(n){ return n.toFixed(2).replace(".", ","); }
+function mmss(s){ const m=Math.floor(s/60), r=s%60; return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0"); }
+
+/* Construye la lista de preguntas de la convocatoria elegida.
+   En «todas» se eliminan duplicados (misma pregunta y misma respuesta correcta). */
+function buildPool(sel){
+  if(sel !== "all") return EXAMS[+sel].qs.map(x => ({q:x[0], opts:x[1], ans:x[2], note:x[3]||"", ref:refOf(x), tema:x[4]||"", src:EXAMS[+sel].name}));
+  const seen = new Set(), out = [];
+  EXAMS.forEach(e => e.qs.forEach(x => {
+    const nz = s => s.toLowerCase().replace(/[^a-z0-9áéíóúñ]/g, "");
+    const key = nz(x[0]) + "|" + nz(x[1][x[2]]);
+    if(seen.has(key)) return; seen.add(key);
+    out.push({q:x[0], opts:x[1], ans:x[2], note:x[3]||"", ref:refOf(x), tema:x[4]||"", src:e.name});
+  }));
+  return out;
+}
+
+function prepare(pool){
+  let items = $("shQ").checked ? shuffle(pool) : pool.slice();
+  return items.map(it => {
+    if(!$("shO").checked) return {...it};
+    const order = shuffle(it.opts.map((_,i)=>i));
+    return {...it, opts: order.map(i=>it.opts[i]), ans: order.indexOf(it.ans)};
+  });
+}
+
+function start(poolOverride, modeOverride, penOverride){
+  hideOthers(); setNav("test");
+  const sel = $("exam").value;
+  if(modeOverride) $("mode").value = modeOverride;
+  const pool = poolOverride || buildPool(sel);
+  const pen = penOverride !== undefined ? penOverride : (sel === "all" ? DEFAULT_PEN : EXAMS[+sel].pen);
+  S = { items: prepare(pool), answers: [], idx: 0, finished: false, t0: Date.now(), elapsed: 0, filter: sel, pen };
+  $("rule").textContent = "aciertos +0,5 · errores " + (pen ? "−" + fmt(pen) : "no restan");
+  $("results").style.display = "none";
+  $("quiz").style.display = "flex";
+  clearInterval(timerId);
+  timerId = setInterval(() => { if(!S.finished){ S.elapsed = Math.floor((Date.now()-S.t0)/1000); $("timer").textContent = mmss(S.elapsed); } }, 1000);
+  $("timer").textContent = "00:00";
+  const label = sel === "all" ? "Todas las convocatorias (sin repetidas)" : "Convocatoria " + EXAMS[+sel].name;
+  $("badge").textContent = (poolOverride ? "Repaso de falladas" : label);
+  render();
+}
+
+function showFeedback(i){ // ¿se muestran aciertos/errores en esta pregunta?
+  return S.finished || ($("mode").value === "study" && S.answers[i] !== undefined);
+}
+
+function render(){
+  const it = S.items[S.idx], i = S.idx, fb = showFeedback(i);
+  $("progress").textContent = "Pregunta " + (i+1) + " de " + S.items.length;
+  $("qtext").textContent = (i+1) + ". " + it.q;
+  const box = $("opts"); box.innerHTML = "";
+  it.opts.forEach((t, k) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    const l = document.createElement("span"); l.className = "l"; l.textContent = LET[k] + ")";
+    const s = document.createElement("span"); s.textContent = t;
+    b.append(l, s);
+    const chosen = S.answers[i] === k;
+    if(fb){
+      b.disabled = true;
+      if(k === it.ans){ b.classList.add("ok"); s.textContent = t + "  ✓"; }
+      else if(chosen){ b.classList.add("bad"); s.textContent = t + "  ✗ (tu respuesta)"; }
+      else b.classList.add("dim");
+    } else {
+      if(chosen) b.classList.add("sel");
+      b.onclick = () => { S.answers[i] = k; if($("mode").value === "study" && !it.rec){ it.rec = 1; record(it, k === it.ans); } render(); };
+    }
+    box.appendChild(b);
+  });
+  const n = $("note");
+  if(fb && it.note){ n.style.display = "block"; n.textContent = it.note; } else n.style.display = "none";
+
+  const rf = $("ref"), r = it.ref;
+  if(fb && r){
+    rf.style.display = "block"; rf.textContent = "";
+    const mk=(c,t)=>{const d=document.createElement("div");d.className=c;d.textContent=t;rf.appendChild(d);};
+    mk("rh","❦ En el manual");
+    if(r.t) mk("rl","Tema "+r.t+(TEMAS[r.t]?". "+TEMAS[r.t]:"")+" · apdo. "+r.s+" · pág. ≈"+r.p);
+    if(r.x) mk("rx",r.x);
+    if(r.w) mk("rw","Aviso: "+r.w);
+    if(r.s){ const mb = document.createElement("button"); mb.className = "btn s mbtn"; mb.textContent = "Buscar en mi manual"; mb.onclick = () => goManual(r.s.replace(/^[\d.\s]+/,"")); rf.appendChild(mb); }
+  } else rf.style.display = "none";
+
+  $("prev").disabled = i === 0;
+  $("clear").style.display = (S.finished || $("mode").value === "study") ? "none" : "";
+  $("next").textContent = i === S.items.length-1 ? (S.finished ? "Ver resultado" : "Finalizar") : "Siguiente";
+  renderGrid();
+}
+
+function renderGrid(){
+  const g = $("grid"); g.innerHTML = "";
+  S.items.forEach((it, i) => {
+    const b = document.createElement("button");
+    b.textContent = i+1;
+    const a = S.answers[i];
+    if(i === S.idx) b.className = "cur";
+    else if(showFeedback(i) && a !== undefined) b.className = a === it.ans ? "ok" : "bad";
+    else if(S.finished && a === undefined) b.className = "";
+    else if(a !== undefined) b.className = "ans";
+    b.onclick = () => { S.idx = i; render(); };
+    g.appendChild(b);
+  });
+  $("counter").textContent = "Pregunta " + (S.idx+1) + " / " + S.items.length;
+  $("answered").textContent = S.answers.filter(x => x !== undefined).length + " respondidas";
+}
+
+function finish(){
+  if(S.finished){ showResults(); return; }
+  const blank = S.items.length - S.answers.filter(x => x !== undefined).length;
+  if(blank > 0 && !confirm("Tienes " + blank + " pregunta(s) en blanco. ¿Finalizar de todos modos?")) return;
+  S.finished = true; S.elapsed = Math.floor((Date.now()-S.t0)/1000);
+  clearInterval(timerId);
+  showResults(true);
+}
+
+function showResults(save){
+  hideOthers();
+  let ok=0, ko=0, bl=0; const fails = [];
+  S.items.forEach((it,i) => {
+    const a = S.answers[i];
+    if(a === undefined){ bl++; fails.push(i); }
+    else if(a === it.ans) ok++;
+    else { ko++; fails.push(i); }
+  });
+  const max = S.items.length * PTS_OK;
+  const score = Math.max(0, ok*PTS_OK - ko*S.pen);
+  const ten = max ? score / max * 10 : 0;
+  $("rscore").textContent = fmt(score);
+  $("rmax").textContent = "sobre " + fmt(max) + " puntos (" + S.items.length + " preguntas)";
+  $("rten").textContent = "Nota sobre 10: " + fmt(ten);
+  $("rsub").textContent = $("badge").textContent + " · tiempo " + mmss(S.elapsed);
+  $("lerr").firstChild.textContent = "Errores (" + (S.pen ? "−" + fmt(S.pen) : "no restan") + ")";
+  $("sc").textContent = ok; $("si").textContent = ko; $("sb").textContent = bl;
+
+  const f = $("fails"); f.innerHTML = "";
+  if(fails.length){
+    const p = document.createElement("div"); p.textContent = "Falladas o en blanco (pulsa para revisar):"; p.style.marginBottom = "4px"; f.appendChild(p);
+    fails.forEach(i => { const b = document.createElement("button"); b.textContent = i+1; b.onclick = () => goReview(i); f.appendChild(b); });
+  } else f.textContent = "¡Sin fallos!";
+  $("redo").style.display = fails.length ? "" : "none";
+  S.fails = fails;
+
+  // Historial local (si el navegador lo permite)
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem("uned_td_hist") || "[]"); } catch(e){}
+  if(save){
+    S.items.forEach((it,i) => { if(S.answers[i] !== undefined && !it.rec){ it.rec = 1; record(it, S.answers[i] === it.ans); } });
+    hist.push({ exam: $("badge").textContent, ten: +ten.toFixed(2), date: new Date().toLocaleDateString("es-ES") });
+    hist = hist.slice(-30);
+    try { localStorage.setItem("uned_td_hist", JSON.stringify(hist)); } catch(e){}
+  }
+  const mine = hist.filter(h => h.exam === $("badge").textContent);
+  $("hist").textContent = mine.length
+    ? "Intentos en esta convocatoria: " + mine.length + " · mejor nota: " + fmt(Math.max(...mine.map(h=>h.ten))) + " · último: " + fmt(mine[mine.length-1].ten) + " (sobre 10)"
+    : "Aún no hay historial para esta convocatoria.";
+
+  $("quiz").style.display = "none";
+  $("results").style.display = "flex";
+}
+
+function goReview(i){ hideOthers(); setNav("test"); $("results").style.display = "none"; $("quiz").style.display = "flex"; S.idx = i; render(); }
+
+/* Eventos */
+$("prev").onclick = () => { if(S.idx>0){ S.idx--; render(); } };
+$("next").onclick = () => { if(S.idx < S.items.length-1){ S.idx++; render(); } else finish(); };
+$("clear").onclick = () => { delete S.answers[S.idx]; render(); };
+$("finish").onclick = finish;
+$("review").onclick = () => goReview(0);
+$("restart").onclick = () => start();
+$("redo").onclick = () => {
+  const pool = S.fails.map(i => { const it = S.items[i]; return {q:it.q, opts:it.opts, ans:it.ans, note:it.note, ref:it.ref, tema:it.tema, src:it.src}; });
+  start(pool, "study", S.pen);
+};
+["exam","mode","shQ","shO"].forEach(id => $(id).onchange = () => start());
+document.addEventListener("keydown", e => {
+  if(!S || $("results").style.display === "flex" || e.target.tagName === "SELECT") return;
+  if(e.key === "ArrowRight") $("next").click();
+  else if(e.key === "ArrowLeft") $("prev").click();
+  else if(["1","2","3","4","5"].includes(e.key) && !showFeedback(S.idx)){
+    const k = +e.key - 1; if(k < S.items[S.idx].opts.length){ S.answers[S.idx] = k; render(); }
+  }
+});
+
+/* Inicio */
+function initUI(){
+  const sel = $("exam");
+  const total = buildPool("all").length;
+  sel.innerHTML = '<option value="all">Todas (' + total + ' preguntas únicas)</option>' +
+    EXAMS.map((e,i) => '<option value="' + i + '">' + e.name + ' (' + e.qs.length + ')</option>').join("");
+  updateSrsBtn(); start();
+}
+document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
+  const v = b.dataset.v; if(v === "test") start(); else if(v === "srs") startSrs(); else if(v === "temas") showView("temasV"); else if(v === "prog") showView("progV"); else showView("manV");
+});
+$("subj").onchange = () => setSubject($("subj").value);
+$("subjDel").onclick = () => { if(confirm("¿Quitar esta asignatura de este navegador? Se conserva tu progreso por si la vuelves a instalar.")){ const l = userSubjects().filter(x => x.id !== SUBJ); saveSubjects(l); if(l.length) setSubject(l[0].id); else { SUBJ = ""; lsSet("uned_subj",""); fillSubjects(); showView("libV"); } } };
+$("subjLib").onclick = () => showView("libV");
+$("aboutBtn").onclick = () => showView("aboutV");
+$("subjAdd").onclick = () => $("bankFile").click();
+$("subjShare").onclick = () => { const u = location.href.split("#")[0]; if(navigator.share) navigator.share({title:"Subsicivae", text:"Estudia Derecho en los ratos libres", url:u}).catch(()=>{}); else { try{ navigator.clipboard.writeText(u); alert("Enlace copiado: " + u); }catch(e){ prompt("Copia este enlace:", u); } } };
+$("subjTpl").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(TEMPLATE,null,1)],{type:"application/json"})); a.download = "plantilla-banco.json"; a.click(); };
+$("bankFile").onchange = e => {
+  const f = e.target.files[0]; if(!f) return; const r = new FileReader();
+  r.onload = () => { try{
+    const j = JSON.parse(r.result); if(!validBank(j)) throw 0;
+    j.id = "u" + Date.now().toString(36); const l = userSubjects(); l.push(j); if(saveSubjects(l)) setSubject(j.id);
+  }catch(err){ alert("El archivo no tiene el formato correcto. Descarga la plantilla para ver cómo debe ser."); } e.target.value = ""; };
+  r.readAsText(f);
+};
+$("impFile").onchange = e => {
+  const f = e.target.files[0]; if(!f) return; const r = new FileReader();
+  r.onload = () => { try{ const o = JSON.parse(r.result); Object.keys(o).forEach(k => { if(k.indexOf("uned_")===0) lsSet(k, o[k]); }); SUBJ = lsGet("uned_subj","td"); applySubject(); fillSubjects(); initUI(); alert("Progreso importado."); }catch(err){ alert("Archivo no válido."); } e.target.value = ""; };
+  r.readAsText(f);
+};
+$("manFile").onchange = e => {
+  const f = e.target.files[0]; if(!f) return; const r = new FileReader();
+  r.onload = () => { buildManual(r.result); if(!lsSet(manKey(), r.result)) alert("El manual es muy grande para guardarlo en este navegador: tendrás que cargarlo cada vez."); renderManual(); };
+  r.readAsText(f);
+};
+$("manQ").oninput = () => searchManual($("manQ").value);
+$("manDel").onclick = () => { try{ localStorage.removeItem(manKey()); }catch(e){} MAN = null; $("manOut").innerHTML = ""; renderManual(); };
+boot();
+if("serviceWorker" in navigator && location.protocol.indexOf("http") === 0){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+</script>
+</body>
+</html>
