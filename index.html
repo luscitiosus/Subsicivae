@@ -634,7 +634,7 @@ document.addEventListener("keydown", e => {
 
 /* Deslizar entre preguntas */
 (function(){ let ok=false; try{ ok=!localStorage.getItem("uned_sw"); }catch(_){}
-  if(ok && matchMedia("(pointer:coarse)").matches) $("swHint").hidden=false; })();
+  if(ok && window.matchMedia && matchMedia("(pointer:coarse)").matches) $("swHint").hidden=false; })();
 function hideSw(){ $("swHint").hidden=true; try{ localStorage.setItem("uned_sw","1"); }catch(_){} }
 (function(){ let x0=null,y0=0,t0=0; const q=$("quiz");
   q.addEventListener("touchstart",e=>{ if(e.touches.length!==1||e.target.closest("textarea,input,select")){x0=null;return;} x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now(); },{passive:true});
