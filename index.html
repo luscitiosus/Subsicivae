@@ -151,7 +151,7 @@ body.pre .app{visibility:hidden}
    <label for="mode">Modo</label>
    <select id="mode">
     <option value="exam">Examen (corrección al final)</option>
-    <option value="study">Estudio (corrección inmediata)</option>
+    <option value="study" selected>Estudio (corrección inmediata)</option>
    </select>
   </div>
   <div>
@@ -478,7 +478,7 @@ function start(poolOverride, modeOverride, penOverride){
   const sel = $("exam").value;
   if(modeOverride) $("mode").value = modeOverride;
   const full = buildPool(sel);
-  const pool = poolOverride || (sel === "all" && $("mode").value !== "study" ? shuffle(full).slice(0, EXAM_N) : full);
+  const pool = poolOverride || (sel === "all" ? shuffle(full).slice(0, EXAM_N) : full);
   const pen = penOverride !== undefined ? penOverride : (sel === "all" ? DEFAULT_PEN : EXAMS[+sel].pen);
   S = { items: prepare(pool), answers: [], idx: 0, finished: false, t0: Date.now(), elapsed: 0, filter: sel, pen };
   $("rule").textContent = "aciertos +0,5 · errores " + (pen ? "−" + fmt(pen) : "no restan");
