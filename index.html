@@ -80,7 +80,7 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 .row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.row .btn{flex:1}
 .hint{font-size:14px;color:var(--ink2);background:var(--paper2);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-top:12px;text-align:left}
 
-.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.nav{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
 .brand{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--rule);padding-bottom:4px}.brand span{font-size:22px;font-weight:700;color:var(--wine);letter-spacing:1px}.brand em{font-size:12px;color:var(--ink2)}
 .nav button{border:1px solid var(--rule);background:#ffffff;color:var(--ink2);font:inherit;font-size:13px;font-weight:600;padding:7px 1px;cursor:pointer;border-radius:2px}
 .nav button.on{background:var(--wineb);border-color:var(--wine);color:#ffffff}
@@ -98,6 +98,7 @@ footer{max-width:780px;width:100%;margin:20px auto 0;padding-top:14px;border-top
 .wrow{font-size:14px;padding:5px 0;border-bottom:1px dotted var(--rule)}
 #manQ{width:100%;padding:9px;font:inherit;font-size:17px;border:1px solid var(--rule);background:#ffffff;color:var(--ink);border-radius:2px}
 .mhit{margin:10px 0;padding:10px 12px;background:#faf8f5;border-left:3px solid var(--gold);font-size:15px;line-height:1.45}
+.flag{background:transparent;border:1px solid var(--gold);border-radius:2px;padding:3px 10px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)}.flag.on{background:#f3e6e9;color:var(--wine);border-color:var(--wine)}
 .mbtn{margin-top:10px;font-size:14px;padding:6px 12px}
 @media(max-width:860px){
  body{padding:0}.app{flex-direction:column;height:100vh;border-radius:0}
@@ -142,7 +143,7 @@ body.pre .app{visibility:hidden}
   <div class="brand"><span>SVBSICIVÆ</span><em>horas subsecivas</em></div>
   <button class="lnk setbtn keep" id="setBtn" type="button">⚙ Ajustes y asignatura</button>
   <div class="keep"><h1 id="h1">Teoría del Derecho</h1><p class="sub"><span id="rule"></span></p></div>
-  <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
+  <div class="nav"><button data-v="test" class="on">Test</button><button data-v="srs" id="bSrs">Repaso</button><button data-v="temas">Temas</button><button data-v="flag" id="bFlag" title="Preguntas marcadas">★ 0</button><button data-v="prog">Progreso</button><button data-v="man">Manual</button></div>
   <div class="subjrow"><label for="subj">Asignatura</label><select id="subj"></select><div id="subjDesc" class="sdesc"></div>
    <div class="sbtns"><button class="lnk" id="subjLib">＋ Añadir asignaturas</button><button class="lnk" id="subjDel" style="display:none">Quitar esta</button></div></div>
   <input type="file" id="bankFile" accept=".json,application/json" hidden><input type="file" id="impFile" accept=".json,application/json" hidden>
@@ -154,6 +155,7 @@ body.pre .app{visibility:hidden}
     <option value="study" selected>Estudio (corrección inmediata)</option>
    </select>
   </div>
+  <div><label for="nq">Preguntas del sorteo</label><select id="nq"><option value="10">10</option><option value="20" selected>20</option><option value="40">40</option><option value="all">Todas</option></select></div>
   <div>
    <label class="chk"><input type="checkbox" id="shQ"> Barajar preguntas</label>
    <label class="chk"><input type="checkbox" id="shO" checked> Barajar opciones</label>
@@ -168,6 +170,7 @@ body.pre .app{visibility:hidden}
   <header>
    <span class="badge" id="badge"></span>
    <span id="timer">00:00</span>
+   <button class="flag" id="flag" type="button" aria-pressed="false">☆ Marcar</button>
    <span id="progress"></span>
   </header>
   <div class="qwrap">
@@ -347,7 +350,7 @@ function renderProgress(){
   r.append(be,bi,bz); box.appendChild(r);
 }
 function exportData(){
-  const o = {}; try{ for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(k.indexOf("uned_st_")===0 || k==="uned_td_hist") o[k] = localStorage.getItem(k); } }catch(e){}
+  const o = {}; try{ for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(k.indexOf("uned_st_")===0 || k.indexOf("uned_fl_")===0 || k==="uned_td_hist") o[k] = localStorage.getItem(k); } }catch(e){}
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(o)],{type:"application/json"})); a.download = "progreso-estudio-uned.json"; a.click();
 }
 
@@ -472,13 +475,36 @@ function prepare(pool){
   });
 }
 
-const EXAM_N = 20; // preguntas por intento (como el examen real)
+const nQ = () => { const v = $("nq").value; return v === "all" ? Infinity : +v; }; // preguntas por sorteo (20 = como el examen real)
+/* Preferencias recordadas por asignatura */
+const PREF_IDS = ["exam","mode","nq"], PREF_CHK = ["shQ","shO"];
+const prefKey = () => "uned_pref_" + SUBJ;
+function savePrefs(){ const o = {}; PREF_IDS.forEach(id => o[id] = $(id).value); PREF_CHK.forEach(id => o[id] = $(id).checked); lsSet(prefKey(), JSON.stringify(o)); }
+function loadPrefs(){
+  let o = {}; try{ o = JSON.parse(lsGet(prefKey(), "{}")) || {}; }catch(e){}
+  PREF_IDS.forEach(id => { const e = $(id); if(o[id] !== undefined && [...e.options].some(x => x.value === String(o[id]))) e.value = o[id]; });
+  PREF_CHK.forEach(id => { if(typeof o[id] === "boolean") $(id).checked = o[id]; });
+}
+function labelAll(){
+  const total = buildPool("all").length, n = nQ(), o = $("exam").querySelector('option[value="all"]');
+  if(o) o.textContent = n >= total ? "Todas · las " + total + " preguntas" : "Todas · sorteo de " + n + " de " + total;
+}
+/* Preguntas marcadas para revisar */
+const flKey = () => "uned_fl_" + SUBJ;
+function flLoad(){ try{ return JSON.parse(lsGet(flKey(), "{}")) || {}; }catch(e){ return {}; } }
+function flCount(){ const f = flLoad(); return buildPool("all").filter(it => f[keyOf(it)]).length; }
+function updateFlagBtn(){ $("bFlag").textContent = "★ " + flCount(); }
+function startFlags(){
+  const f = flLoad(), pool = buildPool("all").filter(it => f[keyOf(it)]);
+  if(!pool.length){ alert("No tienes preguntas marcadas. Pulsa «☆ Marcar» en cualquier pregunta para guardarla aquí."); return; }
+  start(pool, "study", DEFAULT_PEN); $("badge").textContent = "Marcadas (" + pool.length + ")";
+}
 function start(poolOverride, modeOverride, penOverride){
   hideOthers(); setNav("test");
   const sel = $("exam").value;
   if(modeOverride) $("mode").value = modeOverride;
   const full = buildPool(sel);
-  const pool = poolOverride || (sel === "all" ? shuffle(full).slice(0, EXAM_N) : full);
+  const pool = poolOverride || (sel === "all" ? shuffle(full).slice(0, nQ()) : full);
   const pen = penOverride !== undefined ? penOverride : (sel === "all" ? DEFAULT_PEN : EXAMS[+sel].pen);
   S = { items: prepare(pool), answers: [], idx: 0, finished: false, t0: Date.now(), elapsed: 0, filter: sel, pen };
   $("rule").textContent = "aciertos +0,5 · errores " + (pen ? "−" + fmt(pen) : "no restan");
@@ -534,6 +560,7 @@ function render(){
     if(r.s){ const mb = document.createElement("button"); mb.className = "btn s mbtn"; mb.textContent = "Buscar en mi manual"; mb.onclick = () => goManual(r.s.replace(/^[\d.\s]+/,"")); rf.appendChild(mb); }
   } else rf.style.display = "none";
 
+  { const on = !!flLoad()[keyOf(it)], fb2 = $("flag"); fb2.classList.toggle("on", on); fb2.setAttribute("aria-pressed", on); fb2.textContent = on ? "★ Marcada" : "☆ Marcar"; }
   $("prev").disabled = i === 0;
   $("clear").style.display = (S.finished || $("mode").value === "study") ? "none" : "";
   $("next").textContent = i === S.items.length-1 ? (S.finished ? "Ver resultado" : "Finalizar") : "Siguiente";
@@ -624,7 +651,8 @@ $("redo").onclick = () => {
   const pool = S.fails.map(i => { const it = S.items[i]; return {q:it.q, opts:it.opts, ans:it.ans, note:it.note, ref:it.ref, tema:it.tema, src:it.src}; });
   start(pool, "study", S.pen);
 };
-["exam","mode","shQ","shO"].forEach(id => $(id).onchange = () => start());
+["exam","mode","nq","shQ","shO"].forEach(id => $(id).onchange = () => { if(id === "nq") labelAll(); savePrefs(); start(); });
+$("flag").onclick = () => { const it = S.items[S.idx], f = flLoad(), k = keyOf(it); if(f[k]) delete f[k]; else f[k] = 1; lsSet(flKey(), JSON.stringify(f)); updateFlagBtn(); render(); };
 document.addEventListener("keydown", e => {
   if(!S || $("results").style.display === "flex" || e.target.tagName === "SELECT") return;
   if(e.key === "ArrowRight") $("next").click();
@@ -650,13 +678,12 @@ function hideSw(){ $("swHint").hidden=true; try{ localStorage.setItem("uned_sw",
 /* Inicio */
 function initUI(){
   const sel = $("exam");
-  const total = buildPool("all").length;
-  sel.innerHTML = '<option value="all">Todas · sorteo de ' + Math.min(EXAM_N,total) + ' de ' + total + '</option>' +
+  sel.innerHTML = '<option value="all"></option>' +
     EXAMS.map((e,i) => '<option value="' + i + '">' + e.name + ' (' + e.qs.length + ')</option>').join("");
-  updateSrsBtn(); start();
+  loadPrefs(); labelAll(); updateSrsBtn(); updateFlagBtn(); start();
 }
 document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
-  const v = b.dataset.v; if(v === "test") start(); else if(v === "srs") startSrs(); else if(v === "temas") showView("temasV"); else if(v === "prog") showView("progV"); else showView("manV");
+  const v = b.dataset.v; if(v === "test") start(); else if(v === "srs") startSrs(); else if(v === "flag") startFlags(); else if(v === "temas") showView("temasV"); else if(v === "prog") showView("progV"); else showView("manV");
 });
 $("subj").onchange = () => setSubject($("subj").value);
 $("subjDel").onclick = () => { if(confirm("¿Quitar esta asignatura de este navegador? Se conserva tu progreso por si la vuelves a instalar.")){ const l = userSubjects().filter(x => x.id !== SUBJ); saveSubjects(l); if(l.length) setSubject(l[0].id); else { SUBJ = ""; lsSet("uned_subj",""); fillSubjects(); showView("libV"); } } };
